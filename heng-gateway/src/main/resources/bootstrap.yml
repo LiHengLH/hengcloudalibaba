@@ -1,0 +1,68 @@
+server:
+  port: 9527
+
+spring:
+  boot: # 接入 spring boot admin
+    admin:
+      client:
+        url: http://heng-watcher:8090
+        username: liheng
+        password: 123aaa
+  application:
+    name: @artifactId@
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: biz
+          uri: lb://heng-administrator-biz
+          predicates:
+            - Path=/user/**
+          filters:
+            - PrefixPath=/gateway
+            - StripPrefix=2
+
+    nacos:
+      discovery:
+        server-addr: ${NACOS_HOST:heng-register}:${NACOS_PORT:8848}
+        group: group_dev
+        namespace: 3c24d141-0259-459b-a3e6-60a106cfad1f
+      config:
+        server-addr: ${NACOS_HOST:heng-register}:${NACOS_PORT:8848}
+        file-extension: yaml
+        group: group_dev
+        namespace: 3c24d141-0259-459b-a3e6-60a106cfad1f
+        shared-configs[0]:
+          data-id: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+          group: group_dev
+          refresh: true
+  profiles:
+    active: @profiles.active@
+
+management:
+  endpoint:
+    health:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+swagger:
+  title: Pig Swagger API
+  license: Powered By pig4cloud
+  licenseUrl: https://pig4cloud.com
+  terms-of-service-url: https://pig4cloud.com
+  contact:
+    email: wangiegie@gmail.com
+    url: https://pig4cloud.com
+  authorization:
+    name: pig4cloud OAuth
+    auth-regex: ^.*$
+    authorization-scope-list:
+      - scope: server
+        description: server all
+    token-url-list:
+      - http://${GATEWAY_HOST:pig-gateway}:${GATEWAY-PORT:9999}/auth/oauth/token
+

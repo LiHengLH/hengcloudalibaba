@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.hengcloud.heng.feign.HengFeignAutoConfiguration,\
+com.hengcloud.heng.feign.handle.MyGlobaleException
+
